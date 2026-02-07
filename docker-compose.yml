@@ -14,7 +14,7 @@ services:
       # - If using Caddy: https://comet.yourdomain.com
       # - If using Tailscale Funnel: https://your-server.tailnet.ts.net
       # - If local only: http://192.168.X.X:8000
-      - BASE_URL=${BASE_URL}
+      - PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
       - FASTAPI_HOST=0.0.0.0
       - FASTAPI_PORT=8000
       
@@ -52,7 +52,7 @@ services:
 
   # --- PostgreSQL Database ---
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: comet-postgres
     restart: unless-stopped
     environment:

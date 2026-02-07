@@ -40,6 +40,7 @@ docker-compose up -d
 2. Add Indexers: This stack does not come with pre-configured indexers. You must add them manually.
 
 > ⚠️ Performance Tip: * Do not add 50 indexers blindly. This will slow down your search significantly.
+> ⚠️ Pro Tip from the Comet Dev: Avoid adding indexers that strictly require FlareSolverr if you want maximum speed. Cloudflare bypasses can add 10+ seconds to your search time. Recommended fast public indexers: TheRARBG, The Pirate Bay, Knaben. For Anime: Enable native scrapers for Nyaa, AnimeTosho in the Comet config.
 
 3. Test manually: Add a few public indexers and use the "Test" button or perform a manual search.
 
