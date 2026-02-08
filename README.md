@@ -98,6 +98,86 @@ docker compose down && docker compose up -d
 
 > **Note:** If you need public access (not recommended), use `tailscale funnel` instead of `tailscale serve` and enable Funnel in your Tailscale Admin Console.
 
+## 🌐 CometNet (P2P Torrent Sharing)
+
+CometNet allows Comet instances to share torrent metadata with each other, improving discovery coverage for all participants. When you find a torrent, it gets shared with the network, and vice versa.
+
+### Enabling CometNet
+
+Add these to your `.env`:
+
+```env
+COMETNET_ENABLED=True
+FASTAPI_WORKERS=1
+
+# Your public WebSocket URL (required for others to connect to you)
+COMETNET_ADVERTISE_URL=wss://your-tailscale-hostname.ts.net:8765
+```
+
+### Exposing CometNet Publicly
+
+CometNet uses port 8765 for WebSocket connections. To allow others to connect:
+
+1. **Add port 8765** to your `docker-compose.yml` comet service:
+   ```yaml
+   ports:
+     - "8000:8000"
+     - "8765:8765"
+   ```
+
+2. **Expose via Tailscale Funnel** (CometNet requires public access):
+   ```bash
+   tailscale funnel --bg --https=8765 http://localhost:8765
+   ```
+
+3. **Restart the stack**:
+   ```bash
+   docker compose down && docker compose up -d
+   ```
+
+### Connecting to Others
+
+To connect to other CometNet nodes, add their URLs to your `.env`:
+
+```env
+# Bootstrap nodes (for discovering the network)
+COMETNET_BOOTSTRAP_NODES='["wss://bootstrap.example.com:8765"]'
+
+# Or direct peer connections (friends' Comet instances)
+COMETNET_MANUAL_PEERS='["wss://friend-server.ts.net:8765"]'
+```
+
+### Your CometNet URL
+
+Share this URL with friends who want to connect to your instance:
+```
+wss://your-tailscale-hostname.ts.net:8765
+```
+
+They add it to their `COMETNET_MANUAL_PEERS` in their `.env` file.
+
+### Private Networks (Friends Only)
+
+For a closed group of trusted friends:
+
+```env
+COMETNET_PRIVATE_NETWORK=True
+COMETNET_NETWORK_ID=my-friends-network
+COMETNET_NETWORK_PASSWORD=shared-secret-password
+```
+
+All members must use the same Network ID and Password.
+
+### Verify CometNet is Working
+
+Check the container logs for:
+```
+CometNet started - Node ID: abc123...
+Connected to peer def456...
+```
+
+Or visit the Admin Dashboard at `http://localhost:8000/admin` → CometNet tab.
+
 ## 📂 Project Structure
 * docker-compose.yml: Main stack definition.
 
